@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heisenberg's Nuclear Comedy</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6; }
+        }
+        .scene {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            border-left: 5px solid #ffd700;
+        }
+        .character {
+            font-weight: bold;
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+        .dialogue {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .math-bubble {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px dashed #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+        .punchline {
+            background: rgba(255, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            text-align: center;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .emoji {
+            font-size: 2em;
+            display: inline-block;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        button {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎪 The Heisenberg Uncertainty Principle Comedy Hour! 🎪</h1>
+        
+        <div id="step1" class="step active">
+            <div class="scene">
+                <p class="character">🕵 Detective Heisenberg:</p>
+                <p class="dialogue">"Ladies and gentlemen, we have a MISSING PERSON case! An electron claims it lives inside the nucleus. Let's investigate..."</p>
+            </div>
+
+            <div class="scene">
+                <p class="character">👨‍⚖ Judge Physics:</p>
+                <p class="dialogue">"Detective, what's your evidence?"</p>
+                
+                <p class="character">🕵 Detective Heisenberg:</p>
+                <p class="dialogue">"Well, Your Honor, the nucleus is TINY - only 10⁻¹⁴ meters! If our electron friend is chilling there..."</p>
+                
+                <div class="math-bubble">
+                    📏 Position uncertainty: Δx ≈ 10⁻¹⁴ m<br>
+                    <span class="emoji">🤔</span> "You can't hide in a closet without us knowing you're in a closet!"
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button onclick="showStep(2)">Continue Investigation... 🔍</button>
+            </div>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="scene">
+                <p class="character">🕵 Detective Heisenberg:</p>
+                <p class="dialogue">"But HERE'S THE TWIST! My famous uncertainty principle says..."</p>
+                
+                <div class="math-bubble">
+                    ⚖ Δx · ΔPx ≥ ℏ/4π<br><br>
+                    Translation: "If you know WHERE something is really well,<br>
+                    you have NO IDEA how fast it's zooming around!"
+                </div>
+
+                <p class="dialogue">"Since Δx is super tiny (10⁻¹⁴ m), the momentum uncertainty ΔPx must be HUGE!"</p>
+
+                <div class="math-bubble">
+                    🧮 ΔPx ≥ ℏ/(4π·Δx)<br>
+                    ΔPx ≥ (6.625 × 10⁻³⁴)/(4π × 10⁻¹⁴)<br>
+                    ΔPx ≥ 0.5 × 10⁻²⁰ N·s<br><br>
+                    <span class="emoji">💨</span> That's like asking someone to stand still while riding a rocket!
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button onclick="showStep(3)">The Plot Thickens! 🎬</button>
+            </div>
+        </div>
+
+        <div id="step3" class="step">
+            <div class="scene">
+                <p class="character">⚡ Einstein (special guest appearance):</p>
+                <p class="dialogue">"Hold my E=mc²! If momentum is crazy, ENERGY must be crazier!"</p>
+
+                <div class="math-bubble">
+                    💡 E² = P²c² + m₀²c⁴<br><br>
+                    For our speedy electron:<br>
+                    E ≥ (0.5 × 10⁻²⁰)² × (3 × 10⁸)² + (9.11 × 10⁻³¹)² × (3 × 10⁸)⁴<br><br>
+                    E ≥ 1.5 × 10⁻¹² J = 9.4 MeV<br><br>
+                    <span class="emoji">🚀</span> That's like running a marathon... EVERY SECOND!
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button onclick="showStep(4)">The Grand Finale! 🎆</button>
+            </div>
+        </div>
+
+        <div id="step4" class="step">
+            <div class="scene">
+                <p class="character">🕵 Detective Heisenberg:</p>
+                <p class="dialogue">"Your Honor, here's the smoking gun!"</p>
+
+                <div class="punchline">
+                    ⚠ THE ELECTRON WOULD NEED 9.4 MeV OF ENERGY! ⚠
+                </div>
+
+                <p class="dialogue">"But when we do actual experiments (beta decay), electrons only have 3-4 MeV!"</p>
+
+                <div class="math-bubble">
+                    🔬 Reality Check:<br>
+                    • Required energy to live in nucleus: 9.4 MeV<br>
+                    • Actual electron energy from nucleus: 3-4 MeV<br><br>
+                    <span style="font-size: 2em;">❌ BUSTED! ❌</span>
+                </div>
+            </div>
+
+            <div class="scene">
+                <p class="character">👨‍⚖ Judge Physics:</p>
+                <p class="dialogue">"Case closed! The electron is like a teenager claiming they live in a shoebox while needing a mansion's worth of energy. GUILTY of not existing in the nucleus!"</p>
+                
+                <div class="punchline">
+                    🎭 THE MORAL OF THE STORY 🎭<br><br>
+                    "Electrons can't live in the nucleus because:<br>
+                    1️⃣ Tiny space = Crazy momentum (Heisenberg)<br>
+                    2️⃣ Crazy momentum = Insane energy (Einstein)<br>
+                    3️⃣ Insane energy ≠ Real measurements (Experiment)<br><br>
+                    <span class="emoji">🎪</span> Physics: Where math tells you what CAN'T happen!
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button onclick="showStep(1)">Watch Again! 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStep(stepNumber) {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+    </script>
+</body>
+</html>
+</html>
