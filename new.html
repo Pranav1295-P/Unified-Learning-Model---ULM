@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Polarization Simulator - Nexus Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-title {
+            font-size: 3.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            animation: fadeInScale 1s ease;
+        }
+
+        .splash-subtitle {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 15px;
+            animation: fadeIn 1.5s ease;
+            font-weight: 600;
+        }
+
+        .splash-subhead {
+            font-size: 1.3em;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 40px;
+            animation: fadeIn 2s ease;
+        }
+
+        .start-button {
+            padding: 20px 50px;
+            font-size: 1.3em;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeIn 2s ease;
+        }
+
+        .start-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            background: #f0f0f0;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            width: 100%;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .simulator-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            height: 400px;
+        }
+
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .control-group h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .formula {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            background: rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-title">P-O BMSCE Interactive Model</div>
+        <div class="splash-subhead">Group 2 Of P-O</div>
+        <button class="start-button" onclick="startSimulator()">Click to Start</button>
+    </div>
+
+    <div class="watermark">Nexus - Pranav Murthy's Interactive Learning Model</div>
+
+    <div class="container">
+        <h1>Light Polarization Simulator</h1>
+
+        <div class="main-content">
+            <div class="simulator-area">
+                <canvas id="polarizationCanvas" width="900" height="400"></canvas>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <h3>First Polarizer</h3>
+                    <div class="slider-container">
+                        <label>
+                            Angle: <span class="value-display" id="angle1Display">0°</span>
+                        </label>
+                        <input type="range" id="polarizer1" min="0" max="180" value="0" step="1">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Second Polarizer</h3>
+                    <div class="slider-container">
+                        <label>
+                            Angle: <span class="value-display" id="angle2Display">90°</span>
+                        </label>
+                        <input type="range" id="polarizer2" min="0" max="180" value="90" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>About Light Polarization</h3>
+                <p>
+                    Polarization is a property of light waves that describes the orientation of their oscillations. 
+                    When unpolarized light passes through a polarizer, only the component of light aligned with the 
+                    polarizer's axis can pass through.
+                </p>
+                <p>
+                    <strong>Malus's Law:</strong> When polarized light passes through a second polarizer, the transmitted 
+                    intensity follows Malus's Law:
+                </p>
+                <div class="formula">
+                    I = I₀ × cos²(θ)
+                </div>
+                <p>
+                    Where θ is the angle between the two polarizers. Try adjusting the angles to see this relationship 
+                    in action! Notice how maximum transmission occurs when polarizers are parallel (0° or 180° difference) 
+                    and minimum when perpendicular (90° difference).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Copyright © Nexus - Pranav Murthy's Interactive Learning Model
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('polarizationCanvas');
+        const ctx = canvas.getContext('2d');
+        const polarizer1Slider = document.getElementById('polarizer1');
+        const polarizer2Slider = document.getElementById('polarizer2');
+        const angle1Display = document.getElementById('angle1Display');
+        const angle2Display = document.getElementById('angle2Display');
+
+        function startSimulator() {
+            document.getElementById('splashScreen').classList.add('hidden');
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const angle1 = parseInt(polarizer1Slider.value);
+            const angle2 = parseInt(polarizer2Slider.value);
+            
+            angle1Display.textContent = angle1 + '°';
+            angle2Display.textContent = angle2 + '°';
+
+            // Light source
+            drawLightSource(50, 200);
+            
+            // Unpolarized light
+            drawUnpolarizedLight(100, 200, 200);
+            
+            // First polarizer
+            drawPolarizer(300, 200, angle1, '#FF6B6B');
+            
+            // Polarized light after first polarizer
+            drawPolarizedLight(350, 200, 200, angle1, 1.0);
+            
+            // Second polarizer
+            drawPolarizer(550, 200, angle2, '#4ECDC4');
+            
+            // Calculate intensity using Malus's Law
+            const angleDiff = Math.abs(angle2 - angle1);
+            const angleRad = (angleDiff * Math.PI) / 180;
+            const intensity = Math.pow(Math.cos(angleRad), 2);
+            
+            // Final light
+            drawPolarizedLight(600, 200, 250, angle2, intensity);
+            
+            // Display intensity
+            drawIntensityInfo(intensity);
+        }
+
+        function drawLightSource(x, y) {
+            // Draw light bulb
+            ctx.fillStyle = '#FFD93D';
+            ctx.beginPath();
+            ctx.arc(x, y, 25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#FFA500';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Light rays
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI) / 4;
+                ctx.beginPath();
+                ctx.moveTo(x + Math.cos(angle) * 30, y + Math.sin(angle) * 30);
+                ctx.lineTo(x + Math.cos(angle) * 45, y + Math.sin(angle) * 45);
+                ctx.strokeStyle = '#FFD93D';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('Light Source', x - 35, y + 50);
+        }
+
+        function drawUnpolarizedLight(startX, y, length) {
+            const segments = 20;
+            const segmentLength = length / segments;
+            
+            for (let i = 0; i < segments; i++) {
+                const x = startX + i * segmentLength;
+                const angle = Math.random() * Math.PI;
+                const amplitude = 30;
+                
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(
+                    x + Math.cos(angle) * amplitude,
+                    y + Math.sin(angle) * amplitude
+                );
+                ctx.strokeStyle = `rgba(255, 215, 0, ${0.3 + Math.random() * 0.4})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function drawPolarizer(x, y, angle, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate((angle * Math.PI) / 180);
+            
+            // Polarizer body
+            ctx.fillStyle = color;
+            ctx.fillRect(-10, -80, 20, 160);
+            
+            // Grid pattern
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            for (let i = -60; i <= 60; i += 10) {
+                ctx.beginPath();
+                ctx.moveTo(-10, i);
+                ctx.lineTo(10, i);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+            
+            // Label
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(angle + '°', x - 15, y + 100);
+        }
+
+        function drawPolarizedLight(startX, y, length, angle, intensity) {
+            const angleRad = (angle * Math.PI) / 180;
+            const segments = 30;
+            const segmentLength = length / segments;
+            const amplitude = 30 * intensity;
+            
+            ctx.strokeStyle = `rgba(135, 206, 250, ${intensity})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i <= segments; i++) {
+                const x = startX + i * segmentLength;
+                const offset = Math.sin((i / segments) * Math.PI * 4) * amplitude;
+                const px = x + Math.cos(angleRad) * offset;
+                const py = y + Math.sin(angleRad) * offset;
+                
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+        }
+
+        function drawIntensityInfo(intensity) {
+            const percentage = (intensity * 100).toFixed(1);
+            
+            // Info box
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(700, 30, 180, 100);
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(700, 30, 180, 100);
+            
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Output Intensity', 715, 55);
+            
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = intensity > 0.5 ? '#4CAF50' : intensity > 0.2 ? '#FF9800' : '#F44336';
+            ctx.fillText(percentage + '%', 740, 90);
+            
+            // Intensity bar
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(715, 100, 150, 15);
+            ctx.fillStyle = ctx.fillStyle = intensity > 0.5 ? '#4CAF50' : intensity > 0.2 ? '#FF9800' : '#F44336';
+            ctx.fillRect(715, 100, 150 * intensity, 15);
+        }
+
+        polarizer1Slider.addEventListener('input', drawScene);
+        polarizer2Slider.addEventListener('input', drawScene);
+
+        drawScene();
+    </script>
+</body>
+</html>
