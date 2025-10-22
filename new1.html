@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schrödinger's Epic Wave Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .wave-canvas {
+            width: 100%;
+            height: 200px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .step-container {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .step-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: #fff;
+        }
+
+        .step-container.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: #fff;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .step-number {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-size: 1.5em;
+        }
+
+        .step-content {
+            display: none;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .step-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .equation {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 1.1em;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #00ff88;
+            pointer-events: none;
+        }
+
+        .fun-fact {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .emoji-float {
+            font-size: 2em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 3em;
+            font-weight: bold;
+            color: rgba(102, 126, 234, 0.08);
+            pointer-events: none;
+            z-index: 1;
+            white-space: nowrap;
+            letter-spacing: 5px;
+            user-select: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">NEXUS - PRANAV MURTHY'S INTERACTIVE PLATFORM</div>
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 0.9em; color: #764ba2; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px;">
+                NEXUS - PRANAV MURTHY'S INTERACTIVE PLATFORM
+            </div>
+            <h1>🌊 Schrödinger's Epic Wave Adventure 🌊</h1>
+            <p class="subtitle">"Where particles party like waves, and equations dance!"</p>
+        </div>
+
+        <canvas id="waveCanvas" class="wave-canvas"></canvas>
+
+        <div class="controls">
+            <button onclick="startSimulation()">▶️ Start Wave Party</button>
+            <button onclick="resetSimulation()">🔄 Reset</button>
+            <button onclick="toggleAutoPlay()">⏯️ Auto-Play Steps</button>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">Wave Frequency (ω): <span id="freqValue">2</span></div>
+            <input type="range" id="frequency" min="1" max="10" value="2" step="0.5">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">Wave Number (k): <span id="waveNumValue">1</span></div>
+            <input type="range" id="waveNumber" min="0.5" max="5" value="1" step="0.1">
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress">0% Complete</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-container" onclick="toggleStep(1)">
+            <div class="step-header">
+                <span>🎭 Step 1: The De Broglie Wave (Where it all begins!)</span>
+                <span class="step-number">1</span>
+            </div>
+            <div class="step-content" id="step1">
+                <p><strong>The Setup:</strong> Imagine a wave chilling out, not going anywhere (time independent). It looks like this:</p>
+                <div class="equation">ψ = A e^(ikx - iωt)</div>
+                <p>Where <strong>A</strong> is amplitude (how tall the wave is), <strong>k</strong> is wave number (how wiggly), and <strong>ω</strong> is frequency!</p>
+                <div class="fun-fact">
+                    <strong>🎪 Fun Fact:</strong> Louis de Broglie suggested that particles act like waves. It's like finding out your pet rock can surf! 🏄‍♂️
+                </div>
+                <p>Now, let's differentiate this bad boy twice with respect to time (t):</p>
+                <div class="equation">∂²ψ/∂t² = -ω² [A e^(ikx - iωt)]</div>
+                <div class="equation">∂²ψ/∂t² = -ω² ψ .........(2)</div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-container" onclick="toggleStep(2)">
+            <div class="step-header">
+                <span>🎨 Step 2: Displacement & Differentiation Dance</span>
+                <span class="step-number">2</span>
+            </div>
+            <div class="step-content" id="step2">
+                <p><strong>The Displacement:</strong> A wave's displacement looks like:</p>
+                <div class="equation">y = A sin(ωt - kx) .........(A)</div>
+                <p>Differentiating twice w.r.t 't' (time loves being differentiated!):</p>
+                <div class="equation">∂²y/∂t² = -ω² y .........(B)</div>
+                <p>Similarly, differentiating twice w.r.t 'x' (space wants attention too!):</p>
+                <div class="equation">∂²y/∂x² = -k² y = -(ω/v)² y = -(1/v)² ω² y .........(C)</div>
+                <div class="fun-fact">
+                    <strong>🎪 Why the squares?</strong> Because derivatives of sine give cosine, and cosine gives negative sine. It's like mathematical yo-yo! 🪀
+                </div>
+                <p>Comparing equations (B) & (C):</p>
+                <div class="equation">∂²y/∂t² = (1/v²) ∂²y/∂x² .........(3)</div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-container" onclick="toggleStep(3)">
+            <div class="step-header">
+                <span>🚀 Step 3: The Traveling Wave Transformation!</span>
+                <span class="step-number">3</span>
+            </div>
+            <div class="step-content" id="step3">
+                <p><strong>By analogy</strong>, for a traveling De Broglie wave (zoom zoom! 💨):</p>
+                <div class="equation">∂²ψ/∂x² = (1/v²) ∂²ψ/∂t² .........(4)</div>
+                <p>Now let's combine equations (2) & (4):</p>
+                <div class="equation">∂²ψ/∂x² = (ω/v)² ψ</div>
+                <p>Where <strong>ω = 2πν</strong> and <strong>v = λν</strong></p>
+                <div class="equation">1/λ² = [4π²ν²/λ²] ∂²ψ/∂x² .........(5)</div>
+                <div class="fun-fact">
+                    <strong>🎯 Remember:</strong> λ (lambda) is wavelength - the distance between wave peaks. It's like measuring how far apart the party guests are! 🎉
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-container" onclick="toggleStep(4)">
+            <div class="step-header">
+                <span>⚡ Step 4: Energy Enters the Chat!</span>
+                <span class="step-number">4</span>
+            </div>
+            <div class="step-content" id="step4">
+                <p><strong>For a particle with mass 'm' and velocity 'v':</strong></p>
+                <div class="equation">Kinetic Energy = ½mv² = m·v²/2m = p²/2m</div>
+                <p>But wait! From de Broglie: <strong>p = h/λ</strong></p>
+                <p>Therefore:</p>
+                <div class="equation">KE = [1/λ²][h²/2m]</div>
+                <p>Substituting 1/λ² from equation (5):</p>
+                <div class="equation">KE = [-1/(4π²ψ)][h²/2m][∂²ψ/∂x²] = [-h²/(8π²m)][1/ψ][∂²ψ/∂x²]</div>
+                <div class="fun-fact">
+                    <strong>🎓 Physics Poetry:</strong> We just connected momentum (p), wavelength (λ), and kinetic energy! It's like finding out your favorite musicians are all in the same band! 🎸
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-container" onclick="toggleStep(5)">
+            <div class="step-header">
+                <span>👑 Step 5: The Grand Finale - Schrödinger Equation!</span>
+                <span class="step-number">5</span>
+            </div>
+            <div class="step-content" id="step5">
+                <p><strong>Total Energy Time!</strong> 🎊</p>
+                <div class="equation">E = PE + KE = V - [h²/(8π²m)][1/ψ][∂²ψ/∂x²]</div>
+                <p>Rearranging (drumroll please 🥁):</p>
+                <div class="equation">∂²ψ/∂x² = (E - V)[-8π²m/h²]ψ</div>
+                <p><strong>And here it is... THE LEGENDARY SCHRÖDINGER EQUATION:</strong></p>
+                <div class="equation" style="font-size: 1.3em; border: 3px solid #00ff88;">
+                    ∂²ψ/∂x² + [8π²m/h²](E - V)ψ = 0
+                </div>
+                <div class="fun-fact">
+                    <strong>🎉 CONGRATULATIONS! 🎉</strong> You just witnessed the birth of one of physics' most beautiful equations! Schrödinger would be proud! This equation describes how quantum particles behave - they're waves AND particles at the same time! Mind = Blown 🤯
+                </div>
+                <div class="emoji-float" style="text-align: center; margin: 20px 0;">
+                    🌟 ⚛️ 🔬 🎓 🏆
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; color: #667eea; font-size: 1.2em;">
+            <strong>You've mastered quantum mechanics! Now go teach your cat about superposition! 🐱📦</strong>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0; color: #764ba2; font-size: 0.9em;">
+            <strong>© Copyright: Nexus - Pranav Murthy</strong>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        let animationId;
+        let time = 0;
+        let isPlaying = false;
+        let autoPlay = false;
+        let currentStep = 0;
+
+        const freqSlider = document.getElementById('frequency');
+        const waveNumSlider = document.getElementById('waveNumber');
+        const freqValue = document.getElementById('freqValue');
+        const waveNumValue = document.getElementById('waveNumValue');
+
+        freqSlider.addEventListener('input', (e) => {
+            freqValue.textContent = e.target.value;
+        });
+
+        waveNumSlider.addEventListener('input', (e) => {
+            waveNumValue.textContent = e.target.value;
+        });
+
+        function toggleStep(stepNum) {
+            const stepContent = document.getElementById('step' + stepNum);
+            const stepContainer = stepContent.parentElement;
+            
+            // Close all other steps
+            for (let i = 1; i <= 5; i++) {
+                if (i !== stepNum) {
+                    document.getElementById('step' + i).classList.remove('show');
+                    document.getElementById('step' + i).parentElement.classList.remove('active');
+                }
+            }
+            
+            stepContent.classList.toggle('show');
+            stepContainer.classList.toggle('active');
+            
+            currentStep = stepContent.classList.contains('show') ? stepNum : 0;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / 5) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('progress').textContent = Math.round(progress) + '% Complete';
+        }
+
+        function drawWave() {
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const omega = parseFloat(freqSlider.value);
+            const k = parseFloat(waveNumSlider.value);
+            const amplitude = 60;
+            const centerY = canvas.height / 2;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00ff88';
+
+            for (let x = 0; x < canvas.width; x++) {
+                const y = centerY + amplitude * Math.sin(k * x * 0.02 - omega * time);
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // Draw particle
+            const particleX = (time * 50) % canvas.width;
+            const particleY = centerY + amplitude * Math.sin(k * particleX * 0.02 - omega * time);
+            
+            ctx.beginPath();
+            ctx.fillStyle = '#ff6b6b';
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#ff6b6b';
+            ctx.arc(particleX, particleY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            time += 0.02;
+        }
+
+        function animate() {
+            if (isPlaying) {
+                drawWave();
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        function startSimulation() {
+            isPlaying = true;
+            animate();
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            time = 0;
+            cancelAnimationFrame(animationId);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            if (autoPlay) {
+                autoPlaySteps();
+            }
+        }
+
+        function autoPlaySteps() {
+            if (!autoPlay) return;
+            
+            let step = 1;
+            const interval = setInterval(() => {
+                if (step > 5 || !autoPlay) {
+                    clearInterval(interval);
+                    return;
+                }
+                toggleStep(step);
+                step++;
+            }, 3000);
+        }
+
+        // Initial draw
+        drawWave();
+    </script>
+</body>
+</html>
